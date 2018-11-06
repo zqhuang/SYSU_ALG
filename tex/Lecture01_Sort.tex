@@ -1,0 +1,112 @@
+\documentclass[CJK,14pt]{beamer}
+\input{macros.tex}
+\begin{document}
+\bch
+
+\title{第一课：排序算法}
+\subtitle{http://zhiqihuang.top}
+  \author{黄志琦}
+  \date{}
+
+  \maketitle
+
+  \begin{frame}
+    \frametitle{内容摘要}
+  \tableofcontents
+  \end{frame}
+
+  \section{综述 (Introduction)}
+
+  \begin{frame}
+\frametitle{为什么要学习（令人头疼的）算法？}
+
+
+    \addfig{1}{tuding.jpg}
+    
+  \end{frame}
+
+  
+  \begin{frame}
+    \bitem
+  \item{观点A: 学习算法还不如学习一门新的编程语言。}
+    \eitem
+
+    \addfig{3}{cv.jpg}
+  \end{frame}
+  
+  
+  \begin{frame}
+    \bitem
+  \item{观点B: 常见的算法都有现成封装好的库，直接调用就行了。}
+    \eitem
+
+{\color{violet}
+    $\gg$ x = [ 4, 2, 1, 10, 5 ]
+    
+    $\gg$ x.sort()
+    
+    $\gg$  print x
+
+  [1, 2, 4, 5, 10]
+}
+
+    
+  \end{frame}
+
+
+  \begin{frame}
+    你有幸成为了阿里公司的码农，从此走向人生巅峰……
+
+    \addfig{2}{manong.jpg}
+  \end{frame}
+
+  \begin{frame}
+\frametitle{老板给你的任务}
+    淘宝服务器上有很多地区电话号码，每个地区的电话号码（假设都是7位正整数）都无序地存在一个（对应于该地区的）文件里。现在要求你写一个程序，把任给的一个文件中的电话号码读出来，排序，然后重新写入文件。
+
+    因为服务器要负担很多其他的工作，老板要求你的程序运行时间不超过1秒，占用内存少于2MB。你能完成任务吗？
+    
+  \end{frame}
+
+
+  \begin{frame}
+\frametitle{C和C++的解决方案}
+
+
+http://zhiqihuang.top/code/sort/bitmap.c
+
+\skiplines
+
+http://zhiqihuang.top/code/sort/bitmap.cpp
+
+  \end{frame}
+  
+  \begin{frame}
+    \frametitle{学习算法的重要性}
+    \bitem
+  \item{算法是逻辑思考能力，是写任何程序的前提；编程语言一通则百通。}
+  \item{现成的库通用性好，对特定的问题往往速度较慢，有时候甚至未必能够解决问题。}
+    \eitem
+  \end{frame}
+  
+  
+  \section{冒泡排序 (Bubble Sort)}
+
+  \begin{frame}
+    \frametitle{}
+  \end{frame}
+
+  \section{快速排序 (Quick Sort)}
+
+  \begin{frame}
+    \frametitle{}
+  \end{frame}
+
+  \section{归并排序 (Merge Sort)}
+
+  \begin{frame}
+    \frametitle{}
+  \end{frame}
+  
+\ech
+\end{document}
