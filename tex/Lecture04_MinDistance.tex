@@ -1,0 +1,219 @@
+\documentclass[CJK,14pt]{beamer}
+\input{macros.tex}
+\begin{document}
+\bch
+
+\title{第四课：最短路径问题}
+\subtitle{http://zhiqihuang.top/algorithms}
+  \author{黄志琦}
+  \date{}
+
+  \maketitle
+
+  \begin{frame}
+    \frametitle{内容摘要}
+  \tableofcontents
+  \end{frame}
+
+  \section{图的最短路径问题}
+
+  \begin{frame}
+    \frametitle{寒假快到了，苗十三准备去旅游了！}
+
+
+    因为这学期被{\bf 扣工资扣得很惨}，苗十三手头不是很宽裕，必须精打细算。他想弄清去各个城市的最低开销。
+
+    {\scriptsize（嗯，不用考虑回来的开销。苗十三准备找警察叔叔说自己被拐卖，免费被送回来。）}
+
+
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{苗十三查到的各个航班的机票价格}
+    \addfig{4}{paths.jpg}
+  \end{frame}
+  
+
+  \begin{frame}
+    \frametitle{用矩阵来表示}
+    用0,1,2,\ldots,7分别表示珠海，上海，北京，广州，重庆，南京，杭州，拉萨。
+
+    \skiplines
+    
+    用一个二维数组 x[8][8] 来表示航班价格：
+
+    \skiplines
+    
+    x[i][j] = i到j的直飞价格（如无航班记作$\infty$)
+
+  \end{frame}
+
+  \section{Floyd-Warshall算法}
+
+  \begin{frame}
+    \frametitle{Floyd-Warshall算法思想}
+
+    第一步：把矩阵更新为
+
+    x[i][j] = 允许到城市0中转，i到j的最少机票花销
+
+    {\blue \small
+  if(x[i][0]+x[0][j]$<$x[i][j]) x[i][j]=x[i][0]+x[0][j];}
+
+\skipline
+
+第二步：把矩阵更新为
+
+x[i][j] = 允许到城市0和1中转，i到j的最少机票花销
+
+{\blue \small
+  if(x[i][1]+x[1][j]$<$x[i][j]) x[i][j]=x[i][1]+x[1][j];}
+    
+{\scriptsize 注意：如果最佳转机顺序是i$\rightarrow$1$\rightarrow$0$\rightarrow$j.因为x[1][j]已经在第一步被更新为 i$\rightarrow$0$\rightarrow$j的价格，在第二步仍然可以通过比较x[i][1]+x[1][j]和x[i][j]找到正确的最低价格。}
+
+这样一直进行下去，第八步之后(搞定)：
+
+x[i][j] = 允许任意转机, i到j的的最少机票花销
+  \end{frame}
+  
+  \begin{frame}
+    \frametitle{Floyd-Warshall算法的优缺点}
+    \bitem
+  \item{优点：算法及其简明；可以求出图中任意两点最短距离。}
+  \item{缺点：对$N$个顶点的图，算法复杂度是$O(N^3)$，不适合太多个顶点的问题。}
+    \eitem
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{程序实现}
+
+    参考：
+    
+    zhiqihuang.top/algorithms/examples.php
+    
+    
+  \end{frame}
+
+  \section{Dijkstra算法}
+  
+  \begin{frame}
+    Floyd-Warshall算法一下子把任何两个城市间的最低机票开销算出来了。但苗十三只关心从珠海到各个城市怎么飞最便宜。有没有不那么“浪费”的算法呢？
+
+    \skiplines
+    
+    有的，比如Dijkstra算法就是个不错的方法。
+  \end{frame}
+  
+
+  \begin{frame}
+    \frametitle{Dijkstra算法的基本思想}
+    用一个额外的数组m来记录珠海到各个城市的最少机票开销：
+
+    如果要求直飞：
+
+    m=\{$600,900,200,1100,\infty,\infty,\infty$\};
+
+      
+    
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{Dijkstra算法的基本思想}
+    注意到珠海到广州的直飞价格200最低。显然，即使允许任意转机，这个价格也是最低的（因为一往其他地方飞，就超过这个价格了)。我们用蓝色标记出来，表示这个价格已经是允许任意转机的最低价了：
+
+    m=\{$600,900,{\blue 200},1100,\infty,\infty,\infty$\};      
+
+    接下来，我们立刻考虑能否通过从广州转一次机省钱：从广州可以直接到达的只有北京和拉萨，经过比较发现可以把到北京和拉萨的最低开销都更新：
+
+    m = \{ $600, 800, {\blue 200}, 1100, \infty, \infty, 1700$ \};
+
+      
+    
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{Dijkstra算法的基本思想}
+    现在还没有标记蓝色的数字中最小的是珠海到上海的价格600。这个其实也已经是允许任意转机的最低价了！为什么呢？因为要比这个价格低，只可能从价格更低的广州转机。而从广州转机的价格我们已经考虑并更新过了。
+
+    OK，既然是允许任意转机的最低价，我们继续标记蓝色：
+    
+
+    m = \{ ${\blue 600}, 800, {\blue 200}, 1100, \infty, \infty, 1700$ \};
+
+    可以从上海转机去重庆和南京，我们立刻比较更新一下去重庆和南京的最低开销：
+
+    m = \{ ${\blue 600}, 800, {\blue 200}, 1000, 800, \infty, 1700$ \};    
+  \end{frame}
+
+
+\begin{frame}
+  \frametitle{Dijkstra算法的基本思想}
+  现在的
+  
+  m = \{ ${\blue 600}, 800, {\blue 200}, 1000, 800, \infty, 1700$ \};
+
+  记录的是允许从广州和上海转机的最低开销。还没蓝染（em？）的城市中最低开销有北京800和南京800。这两个也都已经是允许任意转机的最低开销了！都蓝染一下：
+  
+  m = \{ ${\blue 600}, {\blue 800}, {\blue 200}, 1000, {\blue 800}, \infty, 1700$ \};  
+
+  可以从北京和南京转机去上海（已经蓝了别指望更新了），杭州，拉萨；比较后发现可以把去杭州最低开销更新一下：
+
+    m = \{ ${\blue 600}, {\blue 800}, {\blue 200}, 1000, {\blue 800}, 1100, 1700$ \};  
+  \end{frame}
+    
+
+\begin{frame}
+  \frametitle{Dijkstra算法的基本思想}
+  继续找黑色的最小那个数，重庆：1000。标上蓝色：
+
+  m = \{ ${\blue 600}, {\blue 800}, {\blue 200}, {\blue 1000}, {\blue 800}, 1100, 1700$ \};
+
+  可以从重庆转机去的南京已经是蓝色，不需要考虑更新。
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Dijkstra算法的基本思想}
+  继续找黑色的最小那个数，杭州：1100。标上蓝色：
+
+  m = \{ ${\blue 600}, {\blue 800}, {\blue 200}, {\blue 1000}, {\blue 800}, {\blue 1100}, 1700$ \};
+
+  可以从杭州转机去的上海已蓝，跳过。
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Dijkstra算法的基本思想}
+  最后黑色的拉萨：1700.标上蓝色：
+
+  m = \{ ${\blue 600}, {\blue 800}, {\blue 200}, {\blue 1000}, {\blue 800}, {\blue 1100}, {\blue 1700}$ \};
+
+  最后的答案就是这些全部染蓝的数字！
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Dijkstra算法的复杂度}
+  假如每个顶点出去的边数不是很多的话，因为每次可以用二分法搜索“黑色最小数”，复杂度就是$O(N\log N)$。
+
+  假如每个顶点出去的边数非常多，在最坏的情况下，就会是$O(N^2\log N)$的复杂度；当然，实际应用中这样的情形极少出现。
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{作业}
+  用Dijkstra算法写程序解决苗十三的旅游问题。
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{补充说明}
+  我们之前讨论的问题都是边的权重为正的情形。如果存在负权重边（就是航空公司倒贴苗十三请求苗十三飞），就要用一种叫Bellman-Ford的算法。因为应用场景不多，就不介绍了。
+\end{frame}
+
+  \ech
+\end{document}

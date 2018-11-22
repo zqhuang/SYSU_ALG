@@ -1,0 +1,121 @@
+\documentclass[CJK,14pt]{beamer}
+\input{macros.tex}
+\begin{document}
+\bch
+
+\title{第二课：插值和搜索}
+\subtitle{http://zhiqihuang.top/algorithms}
+  \author{黄志琦}
+  \date{}
+
+  \maketitle
+
+  \begin{frame}
+    \frametitle{内容摘要}
+  \tableofcontents
+  \end{frame}
+
+  \section{内插值问题}
+
+  \begin{frame}
+    \frametitle{内插值(Interpolation)问题}
+               {\bf 模型}： $y$是$x$的光滑函数
+               
+               {\bf 数据}： 一堆（无误差的）样本$(x_1,y_1)$, $(x_2, y_2)$, \ldots, $(x_N, y_N)$。设其中最小的$x$值为$x_{\min}$，最大的$x$值为$x_{\max}$.
+
+               {\bf 要求}: 写一个函数，要求
+               \bitem
+               \item{每次调用复杂度不超过$O\left(\log(N)\right)$}
+               
+               \item{函数输入：任意满足$x_{\min}\le x\le x_{\max}$的一个$x$}
+               
+               \item{函数输出：函数值$y(x)$}
+                 \eitem
+
+注意插值问题和拟合问题有所不同： 拟合问题里样本是允许有误差的，整个拟合函数的参数个数一般远远小于$N$；插值问题的样本是无误差的（所以要求插值函数对输入的样本$x_i$，严格返回样本$y_i$），插值函数的参数个数一般是$O(N)$的量级。
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{内插值(Interpolation)问题}
+    算法思路：
+    \bitem
+  \item[1]{把数据根据$x_1,x_2,\ldots, x_N$的大小进行排序。}
+  \item[2]{对输入的$x$寻找离它最近的几个（一般2个就够了）数据点。}    
+  \item[3]{按照一定的光滑性假设在局域对几个数据点拟合一个简单的函数（这个拟合工作也可以是在第2步之前提前做好保存了的）。}
+  \item[4]{按照局域几个数据点拟合的函数计算$y(x)$}
+    \eitem
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{常见的插值计算方法}
+    \bitem
+  \item{Linear Interpolation (线性插值)}
+  \item{Cubic Spline Interpolation (三次样条插值)}
+    \eitem
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{Linear Interpolation 的优缺点}
+    \bitem
+  \item{优点：稳（对光滑性假设不强，几乎处处适用）}
+  \item{缺点：精度一般（对很光滑的函数而言，精度不够理想）}
+    \eitem
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{Cubic Spline 的优缺点}
+    \bitem
+  \item{优点：对光滑函数而言精度很高}
+  \item{缺点：不够稳（对不大光滑的函数不太友好）}
+    \eitem
+  \end{frame}
+
+    \begin{frame}
+    \frametitle{例题}
+    从文本文件里读入样本(x,y)(每行一组，未排序)，写内插值函数
+
+    \url{http://zhiqihuang.top/algorithms/examples.php}
+  \end{frame}
+
+  
+  \section{图的深度优先搜索和广度优先搜索}
+
+  \begin{frame}
+    \frametitle{图的深度优先搜索和广度优先搜索}
+    \bitem
+  \item{深度优先搜索：通常通过递归来完成。先走完一个分支到头，然后倒回来，一旦发现可以走另一条新的分支，就进入新的分支走到头，再往回倒，依此反复，直至走完所有可能路线。}
+  \item{广度优先搜索：按层数推进，第零层是所有可能的出发点，第一层是所有第零层往下走一步形成的路线集合，依此反复。这个算法经常被用来求用最少层数到达给定终点的问题。}
+    \eitem
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{例题}
+    对给定的一个集合，找出所有元素的所有可能的全排列
+
+    \url{http://zhiqihuang.top/algorithms/examples.php}    
+  \end{frame}
+
+  \section{散列表(hash table)}
+  
+  \begin{frame}
+    \frametitle{散列表（哈希表, hash table)的主要想法}
+      数组的寻址是$O(1)$的复杂度，远远快于二分法搜索$O(\log(N))$复杂度。散列表的想法就是把一堆不是整数的对象映射到整数（这个映射叫哈希函数,hash function)，然后直接数组寻址读取。
+
+        \skipline
+        
+      但是不管这个映射方法设计得多巧妙，总会出现两个对象映射到同一个整数的情形，这时候就要在一个位置放多个（哈希函数不是太差劲的话，应该不会是太多个）对象，这可以通过链表的形式来解决。
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{例题}
+    给超市的各种东西的价格做一个哈希表。
+
+    \url{http://zhiqihuang.top/algorithms/examples.php}    
+  \end{frame}
+  
+\ech
+\end{document}

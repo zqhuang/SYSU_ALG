@@ -9,4 +9,4 @@ cd tex
 pdflatex ${filename} 
 mv ${filename/\.tex/\.pdf} ../
 cd ..
-evince ${filename/\.tex/\.pdf} &
+

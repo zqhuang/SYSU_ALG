@@ -1,0 +1,138 @@
+\documentclass[CJK]{beamer}
+\input{macros.tex}
+\begin{document}
+\bch
+
+\title{第五课 蒙特卡洛马可夫链 Monte-Carlo Markov Chains (MCMC)}
+\subtitle{http://zhiqihuang.top/algorithms}
+\author{黄志琦}
+\date{}
+
+\maketitle
+
+\begin{frame}
+  \frametitle{内容摘要}
+  \tableofcontents
+\end{frame}
+
+
+\section{MCMC的应用场景}
+
+\begin{frame}
+  \frametitle{贝叶斯统计的常见问题}
+
+  在用贝叶斯统计方法时，常常（嗯，对稍复杂一点的问题甚至可以说几乎一定）会遇到下列情形：
+
+  \skiplines
+  
+  模型参量$(\theta_1,\theta_2,\ldots,\theta_n)$的概率密度函数为：
+  $$P(\theta_1,\theta_2,\ldots,\theta_n) = \frac{1}{Z} \mathcal{L}(\theta_1,\theta_2,\ldots,\theta_n).$$
+  其中$Z$是{\bf 未知的归一化常数}，$\mathcal{L}$是“已知”函数，或者更精确地说： 对于给定的$(\theta_1,\theta_2,\ldots,\theta_n)$，有程序可以计算$\mathcal{L}$。
+  
+\end{frame}
+
+
+  \begin{frame}
+    \frametitle{积分困难}
+    我们通常会去关注某一两个特定参数的统计，理论上讲，只要把其余的参数积分积掉就可以。但是如果参数个数比较多（不用太多，5个以上就差不多可以制造麻烦）或者计算$\mathcal{L}$的程序非常慢，强行积分只会灰飞烟灭\bye.
+
+
+    \skiplines
+    
+    这时候，神奇的MCMC就登场了！它的全名是：
+
+   {\blue 蒙特卡洛马可夫链 (Monte Carlo Markov Chain)}
+
+
+  \end{frame}
+
+  
+  \begin{frame}
+    \frametitle{理想气体分布}
+    我们学过理想气体分子在相空间有一个分布函数：
+    $$P(x,y,z,\upsilon_x,\upsilon_y,\upsilon_z)$$
+    每个分子的$(x,y,z,\upsilon_x,\upsilon_y,\upsilon_z)$都是上述分布的一个样本。理论上讲，如果有足够多的样本，我们可以勾勒出完整的分布函数。
+
+
+    \skiplines
+    
+    如果样本个数不够会发生什么事情呢？
+
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{样本不够多}
+
+ 如果样本个数不够，我们无法得到精确的$P(x,y,z,\upsilon_x,\upsilon_y,\upsilon_z)$。但是，如果我只关心$\upsilon_x$的分布呢？事实上，如果分子真的是随便抓的（可以设想这些分子是编了号码的，你闭着眼睛念自己喜欢的号码）。你不需要多少样本，就能得到很精确的$\upsilon_x$的分布；如果增加样本的个数，你可以得到不错的二元联合分布（例如$(x,\upsilon_x)$的分布）；继续增加样本的个数，可以得到三元联合分布……当然，最后你需要非常多（近乎天文数字）的样本，才能精确地得到六元联合分布$P(x,y,z,\upsilon_x,\upsilon_y,\upsilon_z)$。
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{MCMC的基本思想}
+    MCMC算法就是基于这样的想法：用一组较小的样本来精确计算{\bf 低维空间}的统计。
+  \end{frame}
+
+
+  \section{Metropolis-Hastings Algorithm}
+  
+  \begin{frame}
+    \frametitle{Metropolis-Hastings算法的基本思想}
+
+    基本思想：模拟一个分子（由热运动驱动）在各个能级间的随机跃迁。足够长时间之后，这个分子经历的能级的分布就体现了各个能级上的出现分子的概率。
+
+    一般来说，在现代的计算中，会放几个粒子同时进行模拟，可以稍稍加快收敛速度。
+
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{Metropolis-Hastings算法的伪代码}
+    
+{\small    下面用简化符号$X$来代替多元参数$(\theta_1,\theta_2\ldots\theta_n)$：
+    $$P(X) = \frac{1}{Z} \mathcal{L}(X).$$}
+
+    {\scriptsize
+    \bitem
+  \item[1]{预先指定一个“对称的在附近随机跳跃的规则”: 所谓“对称”，是要求从$A$跳跃到$B$的概率$Q(A\rightarrow B)$和从$B$跳跃到$A$的概率$Q(B\rightarrow A)$相等。所谓“在附近”，是指要选取合适的规则使得这种跳跃倾向于在参数改变量足够小的范围内发生。}    
+  \item[2]{随便取一个初始样本$X_i$ $(i=1)$。}
+  \item[3]{按照跳跃规则，从$X_i$随机地跳跃到一个“候选样本”$Y$。}
+  \item[4]{在[0,1)内随机取一个实数$r$。}
+  \item[5]{如果$\mathcal{L}(Y)/\mathcal{L}(X_i) > r$，就取$X_{i+1}=Y$为下一个样本。否则就取$X_{i+1}=X_i$为下一个样本（即下一个样本和当前这个样本相同）。}
+  \item[6]{goto 步骤3，不断地产生新的样本，构成一个样本链$X_1,X_2,X_3\ldots$。} 
+    \eitem
+}
+  \end{frame}
+
+
+\begin{frame}
+  \frametitle{练习}  
+  请用Metropolis-Hastings算法得到下列分布函数的一个长度不小于50000的样本链。然后计算$x$的期待值和标准差。
+{\small
+  $$ P(a,b,c,x,y,z) \propto \frac{e^{-x^2-2y^2-3z^2-4a^2-5b^2-6c^2}}{(1+x^2y^2z^2+a^2b^2c^2)(1+a^2x^2+b^2y^2 + c^2z^2)}. $$}
+
+
+\skiplines
+
+提示：   因为马可夫链的前面一些样本受到初始样本的人为选择的影响，通常在计算各种统计量时把前面$\sim 10\%$的样本舍弃。  
+\end{frame}  
+  
+
+\begin{frame}
+  \frametitle{补充说明}
+  {\small
+  \bitem
+  \item{Metropolis-Hastings算法是比较均衡的算法：速度不快但是稳，很少出问题。}
+  \item{  有一些在特定的场合下加速的算法： Hamiltonian Sampling, Importance sampling, Gibbs Sampling, Slice Sampling等等。如果感兴趣可以自行搜索学习。}
+  \item{影响收敛速度的因素按重要性从高到低排列：1.随机性走策略；2.样本序列的长度；3.（如果并行）样本序列的个数。}    
+  \item{随机行走函数的选择有很多文章可以作：虽然在范例程序中很随便地选择了一个，在严肃的应用场景中都是要对这部分作优化处理的。}
+  \item{在并行计算中，通常产生10个左右样本序列就足够了。过多地产生样本序列个数对收敛性的帮助不大。如果是单线程计算，更要把主要计算时间用于增长单个样本序列的长度，不要太多次地产生样本序列。}
+
+    \eitem
+    }
+  
+\end{frame}  
+
+  
+  \ech
+\end{document}

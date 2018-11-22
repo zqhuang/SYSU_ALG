@@ -1,0 +1,78 @@
+\documentclass[CJK,14pt]{beamer}
+\input{macros.tex}
+\begin{document}
+\bch
+
+\title{第三课 常微分方程}
+\subtitle{http://zhiqihuang.top/algorithms}
+  \author{黄志琦}
+  \date{}
+
+  \maketitle
+
+  \begin{frame}
+    \frametitle{内容摘要}
+  \tableofcontents
+  \end{frame}
+
+
+  \section{常微分方程的一般形式}
+  
+  \begin{frame}
+    \frametitle{常微分方程（Ordinary Differential Equations）的一般形式}
+    常微分方程都能写成：
+    $$\frac{d\vecx}{dt} = f(t, \vecx).$$
+    的形式。
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{例子}
+    简谐振动：
+    $$ \frac{d^2y}{dt^2} + \omega^2 y = 0.$$
+    定义矢量$(x_1, x_2) = (y, \frac{dy}{dt})$，则
+    \bea
+    \frac{d x_1}{dt} &=& x_2 \newl
+    \frac{d x_2}{dt} &=& - \omega^2 x_1 .    
+    \eea
+  \end{frame}
+  
+
+  \section{4阶Runge-Kutta算法}
+
+  \begin{frame}
+    \frametitle{4阶Runge-Kutta算法}
+    设时间步长为$h$，
+    \bea
+    \veck_1 &=& f(\vecx, t), \newl
+    \veck_2 &=& f(\vecx + \frac{h}{2}\veck_1, t+\frac{h}{2}), \newl
+    \veck_3 &=& f(\vecx + \frac{h}{2}\veck_2, t+\frac{h}{2}),  \newl
+    \veck_4 &=& f(\vecx + h \veck_3, t+h),  \newl
+    \vecx &=& \vecx + \frac{h}{6}\left(\veck_1+2(\veck_2+\veck_3)+\veck_4\right)
+    \eea
+    单步误差$O(h^4)$
+  \end{frame}
+
+  
+  \section{神秘的DVERK程序}
+
+  \begin{frame}
+    \frametitle{神秘的DVERK程序}
+  DVERK由几个算法大牛写于60年代，古老的fortran66语言，goto语句满天飞，完全看不懂；但仍是目前综合性能最佳的解ODE神器。    
+    \bitem
+  \item{5阶/6阶混合变步长Runge-Kutta算法。}
+  \item{精度可调（内置误差估算）。}
+  \item{如果导数处处连续，DVERK稳定，快速，准确可靠。}
+  \item{如果导数不连续，DVERK不太稳定，需要对导数作一些近似的预光滑处理。}
+    \eitem
+
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{范例程序}
+    \url{zhiqihuang.top/algorithms/examples.php}
+  \end{frame}
+  
+  \ech
+\end{document}

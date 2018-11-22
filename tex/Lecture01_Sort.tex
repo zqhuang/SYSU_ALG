@@ -4,7 +4,7 @@
 \bch
 
 \title{第一课：排序算法}
-\subtitle{http://zhiqihuang.top}
+\subtitle{http://zhiqihuang.top/algorithms}
   \author{黄志琦}
   \date{}
 
@@ -73,18 +73,14 @@
 \frametitle{C和C++的解决方案}
 
 
-http://zhiqihuang.top/code/sort/bitmap.c
-
-\skiplines
-
-http://zhiqihuang.top/code/sort/bitmap.cpp
+\url{http://zhiqihuang.top/algorithms/examples.php}
 
   \end{frame}
   
   \begin{frame}
     \frametitle{学习算法的重要性}
     \bitem
-  \item{算法是逻辑思考能力，是写任何程序的前提；编程语言一通则百通。}
+  \item{算法是逻辑思考能力，是写任何程序的前提；编程语言只是实现算法的工具。}
   \item{现成的库通用性好，对特定的问题往往速度较慢，有时候甚至未必能够解决问题。}
     \eitem
   \end{frame}
@@ -93,19 +89,76 @@ http://zhiqihuang.top/code/sort/bitmap.cpp
   \section{冒泡排序 (Bubble Sort)}
 
   \begin{frame}
-    \frametitle{}
+    \frametitle{冒泡排序的思想}
+    \addfig{1}{think1.jpg}
+    
+    要把$n$个数从小到大排列，假设前面$m$个已经排好了，把第$m+1$个位置的数依次和第$m+2$, 第$m+3$,\ldots位置的数比较，如果发现比它小的就做个交换。
   \end{frame}
+
+
+  \begin{frame}
+    \frametitle{冒泡排序的算法}
+    \addfig{1}{manong.jpg}
+    
+    请用你喜欢的编程语言实现把一堆整数从小到大排列的冒泡排序算法，并写个测试程序把10个整数排序。
+  \end{frame}
+
+
+    \begin{frame}
+    \frametitle{冒泡排序的优点和缺点}
+    \bitem
+  \item{没有优点。}
+  \item{缺点：慢，而且不是一般地慢。}
+    \eitem
+    \end{frame}
+
+
+  \begin{frame}
+    \frametitle{练习}
+    \addfig{1}{manong.jpg}
+    
+    请用你喜欢的编程语言实现把一堆整数从小到大排列的冒泡排序算法，并写个测试程序把10个整数排序。
+  \end{frame}
+    
+  
+  
+  \section{归并排序 (Merge Sort)}
+
+  \begin{frame}
+    \frametitle{插入排序和归并排序的思想}
+    插入排序的思想：假设有$m$个已经排好了。然后随便挑个还没排的，用二分法($\log_2N$复杂度)，找到它应该插入的位置。
+
+    归并排序的思想：把要排序的（譬如说）试卷分两堆，各自排好序。然后从顶部往下拿，哪堆最上面那份试卷分数高就拿过来堆放。全拿完最后就并成一堆。
+  \end{frame}
+
+
+      \begin{frame}
+    \frametitle{插入排序和归并排序的优点和缺点}
+    \bitem
+  \item{优点：保证$N\log N$的复杂度}
+  \item{缺点：实现数的插入需要链表，浪费内存且寻址慢。实际速度一般般（当然比冒泡还是要快）。}    
+    \eitem
+  \end{frame}
+
+
 
   \section{快速排序 (Quick Sort)}
 
   \begin{frame}
-    \frametitle{}
+    \frametitle{快速排序的思想}
+    假设我要把一堆试卷按分数排序。
+    
+    先分两堆，一堆及格的，一堆不及格的。($O(N)$复杂度)
+
+    然后把及格的和不及格的分别用快速排序方法排序。(调用自身递归)
   \end{frame}
-
-  \section{归并排序 (Merge Sort)}
-
-  \begin{frame}
-    \frametitle{}
+  
+\begin{frame}
+  \frametitle{快速排序的优点和缺点}
+    \bitem
+  \item{优点：一般都很快。}
+  \item{缺点：特殊情况下会慢到$O(N^2)$量级.}
+    \eitem
   \end{frame}
   
 \ech
