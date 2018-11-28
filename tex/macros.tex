@@ -66,6 +66,8 @@
 \def\ee{\nonumber\end{equation}}
 \def\bea{\begin{eqnarray}}
 \def\eea{\nonumber\end{eqnarray}}
+\def\bmat#1{\left(\begin{array}{#1}}
+\def\emat{\end{array}\right)}
 \def\bch{\begin{CJK}{UTF8}{gbsn}}
 \def\ech{\end{CJK}}
 \def\bchl{\bch\begin{large}}
@@ -79,8 +81,6 @@
 \def\bex{\begin{minipage}{0.2\textwidth}\includegraphics[width=0.6in]{jugelizi.png}\end{minipage}\begin{minipage}{0.76\textwidth}}
 \def\eex{\end{minipage}}
 \def\chtitle#1{\frametitle{\bch#1\ech}}
-\def\bmat#1{\left(\begin{array}{#1}}
-\def\emat{\end{array}\right)}
 \def\bcase#1{\left\{\begin{array}{#1}}
 \def\ecase{\end{array}\right.}
 \def\bmini#1{\begin{minipage}{#1\textwidth}}
@@ -117,9 +117,11 @@
 \def\lagr{{\mathcal{L}}}
 \def\hamil{{\mathcal{H}}}
 \def\vecv{{\mathbf{v}}}
+\def\vecu{{\mathbf{u}}}
 \def\vecx{{\mathbf{x}}}
 \def\vecy{{\mathbf{y}}}
 \def\veck{{\mathbf{k}}}
+\def\vecb{{\mathbf{b}}}
 \def\vecp{{\mathbf{p}}}
 \def\vecn{{\mathbf{n}}}
 \def\vecA{{\mathbf{A}}}

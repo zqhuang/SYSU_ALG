@@ -1,9 +1,9 @@
-\documentclass[CJK,14pt]{beamer}
+\documentclass[CJK]{beamer}
 \input{macros.tex}
 \begin{document}
 \bch
 
-\title{第六课  近邻点搜索和$k$-d Tree}
+\title{第六课  高维空间近邻点搜索}
 \subtitle{http://zhiqihuang.top/algorithms}
   \author{黄志琦}
   \date{}
@@ -15,19 +15,91 @@
   \tableofcontents
   \end{frame}
 
-  \section{近邻点搜索}
+  \section{Nearest Neighbors Search}
 
   \begin{frame}
-    \frametitle{近邻点搜索的应用场景}
-    考虑在N维空间做插值计算。如果数据点是无规律分布的，一般会考虑找最近的若干个数据点进行加权迭加。    
+    \frametitle{问题}
+    在$k$维欧氏空间有一些给定的点：$\vecx_1$, $\vecx_2$, \ldots, $\vecx_N$。对任意的一个测试点$\vecy$要求寻找离$\vecy$最近的$m$个点. $m\ll N$是个给定的很小的整数（通常不到10)。
+
+    \skipline
+    
+    因为要对很多测试点寻找$m$最近邻，希望算法尽可能地优化单次搜寻时间。
   \end{frame}
 
-  \begin{frame}
-    \frametitle{近邻点搜索的应用场景}
 
+  \begin{frame}
+    \frametitle{笨办法}
+    把所有点按照和测试点的距离从小到大排序，然后取前$m$个。
+
+    \skiplines
+
+    准备工作复杂度：不需要准备工作。
+    
+    单次搜索复杂度：$O(N\log N)$
+  \end{frame}
+  
+
+  \section{$k$-d Tree}
+  
+  \begin{frame}
+    \frametitle{$k$-d Tree的基本思想}
+
+    在各个维度上同时进行二分搜索，以期达到$O(\log N)$的复杂度。
     
   \end{frame}
 
+
+  \begin{frame}
+    \frametitle{$k$-d Tree的构造方法}
+
+    依次在各个维度的坐标寻找中位数，把含中位数的一个点放到当前节点，把小于中位数的放到当前节点的左分枝，把其他点放到当前节点的右分枝。
+
+
+    \skiplines
+    
+    准备工作：$O(N^2)$ (如果牺牲一些搜索速度，还可以用近似方法减少这部分的复杂度。)
+    
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{$k$-d Tree的搜索$m$个最近邻的方法}
+    \bitem
+  \item{从树根出发，每移动一次都检验更新$m$个最近邻。}
+    \item{先往测试点的应选（就是如果小于当前节点对应的划分维度坐标，就选左；否则选右）分枝移动搜索（调用函数自身递归）。}
+    \item{再通过比较{\blue 测试点和节点所在的划分超平面的距离}和当前$m$最近邻距离的最大的一个，确定是否要搜索另一个分枝。如果需要，则进入另一个分枝进行搜索（调用自身递归）。}
+      \eitem
+
+
+      \skiplines
+      
+      单次搜索平均复杂度: $O(\log N)$
+    
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{作业}
+
+    在所给的范例基础上，写两个子函数分别实现$k$-d tree增加一个元素的操作和删除一个元素的操作。
+    
+  \end{frame}
+  
+
+  \section{Remarks}
+  
+  \begin{frame}
+    \frametitle{补充说明}
+
+    \bitem
+  \item{当删除或者增加元素操作过多时，$k$-d tree会变得“不平衡”（即某些左枝的深度远远大于右枝的深度）。这时需要重新平衡一下$k$-d tree。有兴趣的同学可以搜索一下这方面的算法。}
+  \item{当维度$k$非常大（至少大于20）时，$k$-d tree的搜索效率变低，这时可以使用一种叫ball tree的数据结构。详细算法请自行搜索了解。}
+    \eitem
+
+    
+  \end{frame}
+  
+  
   
   \ech
 \end{document}

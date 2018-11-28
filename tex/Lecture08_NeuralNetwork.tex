@@ -1,0 +1,263 @@
+\documentclass[CJK]{beamer}
+\input{macros.tex}
+\begin{document}
+\bch
+
+\title{第八课 人工神经网络和机器学习}
+\subtitle{http://zhiqihuang.top/algorithms}
+  \author{黄志琦}
+  \date{}
+
+  \maketitle
+
+  \begin{frame}
+    \frametitle{内容摘要}
+    \tableofcontents
+  \end{frame}
+
+  \section{Introduction}
+  
+  \begin{frame}
+    \frametitle{神经网络的应用场景}
+    我们都知道，有序意味着低熵，无序意味着高熵。但是，有时候有序还是无序并不是一眼能看出来的：比如书法家写的草书，人类DNA的碱基排列这些看上去“混乱”的东西其实包含了大量的信息，是更为难以发现的有序。这些高级的“有序”有个共同的特点：很难用简单的数学结构描述出来。
+
+    \skiplines
+
+    为了发现并研究这些高级的“有序”，铛铛铛铛——用{\blue 人工神经网络}进行{\blue 机器学习}的算法就要登场了！
+  \end{frame}
+
+
+  \section{Perceptron}
+  
+  \begin{frame}
+    \frametitle{二分类问题的线性感知器}
+    假设已知的数据是$n$维空间的一堆点。这些点有的是蓝色的，有的是红色的，我们希望通过机器学习掌握一种分类方法：对新的点可以尽可能准确地判断它应该是蓝色的还是红色的。
+
+    \addfig{1.5}{redblue.jpg}
+    
+    好吧既然我什么都不知道，就从最简单的想法出发，希望存在这样一个$n-1$维超平面：在它的一边大多数点都是红的，另一边大多数点都是蓝的。（当然如果像图中所示，“大多数”实际上是“全部”，我会开心得睡不着觉。）
+    
+  \end{frame}
+  
+
+  \begin{frame}
+    \frametitle{二分类问题的线性感知器}
+    首先我们用一个变量$y$来标记颜色：$y=1$代表红色，$y=-1$代表蓝色。
+
+    \skiplines
+    
+    把$n$维空间的坐标记为$x_1, x_2,\ldots, x_n$，假设超平面的方程为：
+    $$ w_0 + w_1 x_1 + w_2x_2+\ldots+w_nx_n = 0. $$
+    我们新定义一个$x_0\equiv 1$，就可以紧凑地定义超平面划分映射：
+    \begin{equation}
+      y^{\rm model} = \left\{
+        \begin{array}{ll}
+          1, & \text{ if } \sum_{i=0}^n w_ix_i \ge 0; \\
+          -1, & \text{ if } \sum_{i=0}^n w_ix_i < 0.
+        \end{array}
+        \right.
+    \end{equation}
+    
+    如果随便选一堆$w_0,w_1,\ldots$，你（如果没有主角光环带给你逆天运气的话）会遭遇可怕的失败：映射结果很多都和数据点的实际颜色不符。    
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{二分类问题的线性感知器}
+        
+    没关系，失败是成功的大舅子，我们根据失败结果对$w_0,w_1\ldots$进行一些修正：
+
+    $$w_i \rightarrow w_i + \eta(y^{\rm data}-y^{\rm model})x_i,\ (i=0,1,2,\ldots,n)$$
+    其中人为预先选取的固定参数$0<\eta<1$表示“学习速率”。$y^{\rm data}$是数据点真实颜色，$y^{\rm model}$是根据前述的超平面划分映射得到的“理论颜色”。两者如果一致则说明模型OK，不需要更新$w_0,w_1,\ldots$。否则按照上述方法更新所有$w_i$分量之后：
+    $$ \sum_{i=0}^n w_ix_i $$
+    的变化方向和$y^{\rm data} - y^{\rm model} $相同。容易看出来这步调整是使模型朝着真实数据更靠近的方向移动。
+
+    
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{二分类问题的线性感知器}
+    如果有多个数据点，不要总是用同一个数据点来进行调整。可以每次随机选择数据点（也可以就简单地轮着来）进行上述迭代，不断调整$w_0,w_1,\ldots$。
+    
+    \skiplines
+    
+    如果数据点的颜色严格可以用超平面划分来描述，那么按前述办法最终会找到一个能正确划分颜色的超平面。
+
+    \skiplines
+    
+    如果数据点的颜色只是大致可以用超平面划分来描述，那么前述办法只会给出一些“还不错”的超平面。这个迭代过程可以一直进行下去，不会自动结束。。
+  \end{frame}
+
+
+  \section{Artificial Neural}
+  \begin{frame}
+    \frametitle{人工神经元：响应更为光滑的感知器}
+    单位跃阶函数是不连续的非线性函数（嗯，千万不要被它的外表迷惑了，这个家伙非常地非线性）。 有时候我们希望研究连续的映射，这时可以采用一些连续的非线性映射。例如比较流行的有logistic函数(也叫sigmoid函数)
+    \bmini{0.4}
+    $$s(x) = \frac{1}{1+e^{-x}}.$$
+    易验证其导函数
+    $$ s'(x) = s(1-s).$$
+    \emini
+    \bmini{0.55}
+    \lfig{2.5}{sigmoid.pdf}
+    \emini
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{人工神经元：响应更为光滑的感知器}
+    人工神经元的就是把$n$维空间的矢量非线性地映射到$s(x)$的值域$(0,1)$的一个操作：
+    $$ y^{\rm model} = s\left(\sum_{i=0}^n w_ix_i\right). $$
+    当然，如果你喜欢或者根据问题需要，也可以把映射函数换成其他非线性函数。
+
+    （人工神经元的）连续映射和（二分类感知器的）不连续映射的差别在于：一堆人工神经元的输出组成了一个连续变化的多元数组，又可以当成下一人工神经元的输入，由此通过人工神经元的连接可以构成人工神经网络(Neural Network)。
+  \end{frame}
+
+  \section{Artificial Neural Network}
+
+
+  \begin{frame}
+    \frametitle{全连接人工神经网络的示例}
+    \addfig{2}{ANN.png}
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{部分连接人工神经网络的示例}
+    \addfig{2}{pcANN.png}
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{更新权重的算法}
+    我们来研究一个足够能让你明白人工神经网络里的权重是如何更新的例子：
+
+    \addfig{3}{ANN_example.jpg}
+
+    图里每条线都对应一个参数(相当于之前讨论过的$w_i$对应第$i$个权重)，除去输入层之外，每个节点（包括输出节点）也会额外增加一个参数（相当于之前讨论过的$w_0$)。
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{更新权重的算法}
+    \addfig{3}{ANN_example.jpg}
+
+    例如，从输入层$x_1$, $x_2$到隐藏层节点$y_2$的映射为：
+    $$y_2 = s(b_0+b_1x_1+b_2x_2).$$
+    从隐藏层到输出层节点$z$的映射为：
+    $$z = s(w_0+w_1y_1+w_2y_2+w_3y_3).$$
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{更新权重的算法}
+    首先，我们从输入点$x_1$, $x_2$出发和现有的参数计算出输出$z$。在计算过程中，保留所有的中间层的结点数值。
+    $$y_1 = s(a_0+a_1x_1+a_2x_2).$$
+    $$y_2 = s(b_0+b_1x_1+b_2x_2).$$
+    $$y_3 = s(c_0+c_1x_1+c_2x_2).$$    
+    保存了$y_1$, $y_2$, $y_3$之后，再算出 
+    $$z = s(w_0+w_1y_1+w_2y_2+w_3y_3).$$
+
+    这部分计算是沿着神经网络正向进行求值计算。
+  \end{frame}
+  
+
+  \begin{frame}
+    \frametitle{更新权重的算法}
+    先看如果只有一个数据点的情况，我们希望尽量减小
+    $$ E =\frac{1}{2} \left(z-z^{\rm data}\right)^2.$$
+    为此需要求出$E$对所有参数的偏导数：
+    $$\frac{\partial E}{\partial w_0} =  \left(z-z^{\rm data}\right)z(1-z). $$
+    $$\frac{\partial E}{\partial w_1} =  \left(z-z^{\rm data}\right)z(1-z)y_1. $$
+    $$\frac{\partial E}{\partial w_2} =  \left(z-z^{\rm data}\right)z(1-z)y_2.$$
+    $$\frac{\partial E}{\partial w_3} =  \left(z-z^{\rm data}\right)z(1-z)y_3.$$
+    这里值得称赞的技巧是利用sigmoid函数的特点把$s'(w_0+w_1y_1+w_2y_2+w_3y_3)$换成了$z(1-z)$。
+  \end{frame}
+  
+
+  \begin{frame}
+    \frametitle{更新权重的算法}
+    虽然并不直接需要，但是为了后续的进行，我们实际上还要求出$E$对各个隐藏层节点的偏导数：
+
+
+    $$\frac{\partial E}{\partial y_1} =  \left(z-z^{\rm data}\right)z(1-z)w_1. $$
+    $$\frac{\partial E}{\partial y_2} =  \left(z-z^{\rm data}\right)z(1-z)w_2.$$
+    $$\frac{\partial E}{\partial y_3} =  \left(z-z^{\rm data}\right)z(1-z)w_3.$$
+  \end{frame}
+
+  \begin{frame}
+    \frametitle{更新权重的算法}
+    然后就是用导数的链式法则：
+    $$\frac{\partial E}{\partial a_0} = \frac{\partial E}{\partial y_1}\frac{\partial y_1}{\partial a_0} =  \frac{\partial E}{\partial y_1}y_1(1-y_1).$$
+    $$\frac{\partial E}{\partial a_1} = \frac{\partial E}{\partial y_1}\frac{\partial y_1}{\partial a_1} =  \frac{\partial E}{\partial y_1}y_1(1-y_1)x_1.$$
+    $$\frac{\partial E}{\partial a_2} = \frac{\partial E}{\partial y_1}\frac{\partial y_1}{\partial a_2} =  \frac{\partial E}{\partial y_1}y_1(1-y_1)x_2.$$         对$b_0, b_1, b_2, c_0, c_1,c_2$也是如法炮制。
+
+    上述求偏导数的计算是沿着神经网络的反向进行的，所以叫{\blue 反向传播算法}。反向传播算法的发现对人工神经网络的发展起到了关键作用。
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{更新权重的算法}
+    按反向传播算法求出$E$对所有参数的偏导数之后，就可以按照梯度成正比的方式更新权重：
+    $$ p \rightarrow p - \eta\frac{\partial E}{\partial p}. $$
+    其中$\eta>0$是固定的“学习效率”参数；$p$是$a_0,a_1,a_2,b_0,b_1\ldots$这些权重参数。
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{更新权重的算法}
+    如果有多个数据点，可以随机选择其中小批量的数据，算出总的$E$对各个参数的偏导数，然后更新权重。（有时为了贪图方便，也有人直接用所有数据的总$E$对权重进行更新，不过这样计算速度慢，也容易发生锁死在局部最优的情况。）
+  \end{frame}
+  
+  
+  \begin{frame}
+    自己尝试去实现这种数据结构是很有乐趣(em?)的一件事情，这样还能自行设计不同的稀奇古怪的部分连接图。
+
+    \skiplines
+
+    如果你对这种复杂的工作毫无兴趣，就又到了求助于python的时候。
+    
+  \end{frame}
+  
+
+  \begin{frame}
+    \frametitle{python范例}
+    请在
+    
+    zhiqihuang.top/algorithms/examples
+
+    下载ANN的范例程序。定义你自己的分类标准，看看ANN的准确率如何。
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{范例程序的输出结果说明}
+    \bmini{0.4}
+    \addfig{1.6}{precision_recall.png}
+    \emini
+    \bmini{0.55}
+    A类的preicision = 选出的A类里确实是A类的个数 / 选出的A类总个数
+
+    \skipline
+    
+    A类的recall = 选出的A类里确实是A类的个数 / 确实是A类的总个数
+
+    \skipline
+    
+    $\text{f1-score} = \frac{2\text{precision}\cdot\text{recall}}{\text{precision} + \text{recall}}$
+    \emini
+  \end{frame}
+
+  \section{Remarks}
+  
+  \begin{frame}
+    \frametitle{补充说明}
+    \bitem
+  \item{在图像识别领域，经常用到“卷积神经网络”，它的基本思想是构建一个部分连接的多层神经网络，使得层与层之间的连接只在接近的点之间建立，这类似于对图像做一个权重待定的卷积平滑处理。神经网络可以通过学习自动找到合适的卷积核。}
+  \item{高强度的神经网络训练需要用到GPU。python的scikit-learn库目前还不支持GPU运算。如果要完成这样的任务，可以参考CUDA, OpenCL等GPU编程知识。如果只是相对简单的应用，也可以考虑结合python的theano库。请自行搜索学习这方面的内容。}
+    \eitem
+  \end{frame}
+  
+  \ech
+\end{document}

@@ -1,0 +1,250 @@
+\documentclass[CJK]{beamer}
+\input{macros.tex}
+\begin{document}
+\bch
+
+\title{第七课  LAPACK，SVD和最佳线性拟合}
+\subtitle{http://zhiqihuang.top/algorithms}
+  \author{黄志琦}
+  \date{}
+
+  \maketitle
+
+  \begin{frame}
+    \frametitle{内容摘要}
+  \tableofcontents
+  \end{frame}
+
+  \section{LAPACK}
+
+  \begin{frame}
+    \frametitle{解决线性代数问题的标准库 - LAPACK}
+    在正儿八经的大规模科学计算中，线性代数的问题都用{\blue Linear Algebra PACKage (LAPACK)}这个(牛炸天的)程序库来解决。
+
+    \skiplines
+    
+    大多数同学还在使用windows系统，安装使用LAPACK很麻烦（好吧我承认我跟微软不大对付）。
+
+    \skiplines
+    
+    所以我们用一个替代品：{\blue python的linalg库}来讲解线性代数的问题。（实际上linalg用的计算内核还是LAPACK。）
+  \end{frame}
+
+
+  \begin{frame}
+    \frametitle{Python中的linalg库能干些啥}
+    \bitem
+  \item{矩阵和矢量的常规操作}
+  \item{解线性方程组，求矩阵的逆}
+  \item{解决矩阵的本征值问题}
+  \item{{\blue 矩阵的SVD}}
+  \item{{\blue 解决最佳线性拟合问题}}    
+    \eitem
+
+    前面的几种操作线性代数课里都有详细的论述，在linalg里调用也非常容易（请自行搜索练习）。我们要着重讲解的是矩阵的SVD和最佳线性拟合问题。
+  \end{frame}
+  
+
+  \section{SVD}
+
+
+  \begin{frame}
+    \frametitle{标准化的准对角矩阵}
+    如果一个 $m\times n$矩阵$A$的左上最大子方阵（由$A$的$1$至$\min(m, n)$行和$1$至$\min(m, n)$列的公共部分组成）是对角矩阵，且对角元素是逐行递减的非负实数($A_{1,1}\ge A_{2,2}\ge \ldots\ge 0$)，则称$A$是{\blue 标准化的准对角矩阵}。
+
+    \skiplines
+
+    例子：
+    
+    \bmini{0.25}
+    \bcenter
+    $3\times 3$，秩为$2$
+    \ecenter
+   \begin{equation}\left(\begin{array}{lll}
+    3 & 0 & 0 \\
+    0 & 2 & 0 \\
+    0 & 0 & 0 
+     \end{array}\right)\nonumber\end{equation}
+
+     \vspace{0.2in}
+    \emini    
+    \bmini{0.3}
+    \bcenter
+    $5\times 3$，秩为$3$
+    \ecenter
+   \begin{equation}\left(\begin{array}{lll}
+    3 & 0 & 0 \\
+    0 & 1 & 0 \\
+    0 & 0 & \frac{1}{2} \\
+    0 & 0 & 0 \\
+    0 & 0 & 0                         
+     \end{array}\right)\nonumber\end{equation}
+    \emini
+    \bmini{0.38}
+    \bcenter
+    $4\times 6$，秩为$2$    
+    \ecenter
+   \begin{equation}\left(\begin{array}{llllll}
+     2 & 0 & 0 & 0 & 0 & 0 \\
+    0 & 1 & 0 & 0  & 0 & 0 \\
+    0 & 0 & 0 & 0  & 0 & 0 \\
+    0 & 0 & 0 & 0  & 0 & 0    
+     \end{array}\right)\nonumber\end{equation}
+
+     \vspace{0.1in}     
+       \emini
+    
+  \end{frame}
+
+
+    \begin{frame}
+    \frametitle{single value decomposition (SVD)的定义}
+
+    定理：一个$m\times n$的实矩阵$A$，总是能够分解为如下形式：
+
+    $$ A = U \Sigma V^T $$
+    其中$U$是$m\times m$的正交矩阵 ($U U^T = I_{m\times m}$)，$V$是$n\times n$的正交矩阵 ($VV^T = I_{n\times n}$)。$\Sigma$是$m\times n$标准化的准对角矩阵。
+
+    （证明略）
+
+    \skipline
+    
+    这个分解就是名满江湖的single value decomposition ({\blue SVD})。如果要数出5个线性代数最实用理论，SVD一定是其中一个。
+    \end{frame}
+
+
+    \begin{frame}
+    \frametitle{SVD的几何含义}
+    设$A$是一个$m\times n$的矩阵。映射$\vecx\rightarrow A\vecx$把一个$n$维的“初始空间”里的向量$\vecx$映射到一个$m$维的“目标空间”里的$A\vecx$。
+
+    \skipline
+    
+    下面我们来通过SVD理解这种不同维空间的映射到底是如何完成的。
+
+    \skipline
+    
+    设$A$的SVD为：
+    $$ A = U \Sigma V^T $$
+    $V$的列矢量$\vecv_1, \vecv_2,\ldots, \vecv_n$构成初始空间的一组标准正交基。
+ 
+    $U$的列矢量$\vecu_1, \vecu_2,\ldots, \vecu_n$构成目标空间的一组标准正交基。
+
+    $\Sigma$的准对角元$\sigma_1\ge\sigma_2\ge\ldots\ge\sigma_{\min(m,n)}\ge 0$可以看成一些权重，权重的个数不超过$\min(m,n)$个。非零权重的个数（记为$r$）为$\Sigma$的秩，实际上也是$A$的秩。
+    \end{frame}
+
+    \begin{frame}
+    \frametitle{SVD的几何含义}    
+    如果初始空间的矢量$\vecx$可以按标准正交基分解为
+    $$\vecx = VV^T\vecx = V\vecy = y_1 \vecv_1  + y_2 \vecv_2 + \ldots + y_n\vecv_n.$$
+    那么
+    $$ A \vecx = U\Sigma V^T\vecx = U \Sigma \vecy = (\sigma_1y_1)\vecu_1 + (\sigma_2y_2)\vecu_2+\ldots $$
+    也就是说，如果用$V$的列向量为正交基的坐标系描述初始空间，用$U$的列向量为正交基的坐标系描述目标空间，那么映射$A$只是把每个坐标分量依次乘了权重$\sigma_1$, $\sigma_2$，\ldots而已。
+
+    \skipline
+
+    因为在初始空间中取$V$列向量为基的坐标系和在目标空间中取$U$列向量为基的坐标系非常地合理和自然，我们不妨称这些坐标系为“合理坐标系”。
+
+
+    \end{frame}
+
+
+    \section{Linear Least Square}
+    
+    \begin{frame}
+      \frametitle{SVD和最佳线性拟合的问题}
+      我们经常关心最佳线性拟合问题：对给定的映射$A$以及目标空间里的矢量$\vecb$，如何找到一个初始空间的矢量$\vecx$，使$A\vecx$尽可能地接近$\vecb$。也就是要使$\lVert A\vecx - \vecb\rVert$最小。
+
+      \skipline
+      
+      有了上述几何观点之后，这个问题现在看起来很容易，不是吗？对$b$的每个“合理坐标系坐标”$b_i$，如果对应的权重$\sigma_i$不为零，则只要取$\vecx$的相应合理坐标系坐标为$b_i/\sigma_i$。对那些权重为零的分量，就可以都取零（当然也可以随便取，不过一般来说我们希望$\vecx$不要包含冗余信息，所以还是取零吧）。如果$\vecb$有维度超出初始空间的分量，就根本不用管了。
+      
+    \end{frame}
+
+
+    
+    
+    
+
+
+
+    \begin{frame}
+      \frametitle{最佳线性拟合的问题}
+      所以求解最佳线性拟合的步骤为：
+      \bitem
+      \item{SVD: $$A = U\Sigma V^T$$ }
+      \item{求$b$的“合理坐标”: $$ \widetilde{\vecb} = U^Tb $$}
+      \item{计算$x$的“合理坐标”: $\widetilde{x}_i = \widetilde{b}_i/\sigma_i$ (如果$\sigma_i \ne 0$)或者$\widetilde{x}_i=0$ (如果$\sigma_i=0$).}
+      \item{计算$x$的原始坐标系坐标: $\vecx  = V \widetilde{\vecx}$.}
+        \eitem
+
+        \skipline
+        
+        {\bf 注意：}在数值计算时，因为有浮点误差，碰到很小但非零的$\sigma_i$就需要小心：它很可能只是浮点误差产生的，不具有物理意义（具体要根据实际模型来判断），这时需要把它当成零来处理。
+    \end{frame}
+
+
+    \begin{frame}
+      \frametitle{linalg的最佳线性拟合函数}
+      python的linalg.lstsq集成了上述最佳线性拟合的所有步骤，请自行搜索学习这个函数的用法。在lstsq里当然也允许你手动设置当$\sigma_i$很小时（小于参数rcond)就把它忽略。
+
+      \skipline
+
+      linalg库里也有单独只做SVD的函数linalg.svd。请自行搜索学习用法。
+      
+    \end{frame}
+
+
+    \begin{frame}
+      \frametitle{补充说明}
+      既然python的linalg.lstsq集成了最佳线性拟合的所有步骤，为什么还要唠叨一大堆介绍SVD呢？
+
+      \skiplines
+      
+      这是因为SVD的几何诠释清晰地告诉你了线性映射$A$做的事情。在实际应用中，很多时候需要先理解模型，再进行数值计算。所以SVD这个中间步骤非常有意义。
+      
+    \end{frame}
+
+    \section{Applications}
+    
+    \begin{frame}
+      \frametitle{最佳线性拟合的应用}
+      家喻户晓的“最小二乘法”的本质是用两个函数
+      $$f_1(x) = 1$$
+      和
+      $$f_2(x) = x$$
+      的线性组合来拟合一个和数据符合得最佳的函数 $f(x) $。
+    \end{frame}
+
+
+    \begin{frame}
+      \frametitle{最佳线性拟合的应用}
+      一般地，可以用任意一组线性独立的函数
+      $$f_1(x), \ldots, f_{n}(x).$$
+      的线性组合来拟合一个和数据符合得最佳的函数 $f(x)$。
+
+
+      设数据点有$m$个
+      $$(x_1, y_1), (x_2, y_2), \ldots, (x_m, y_m).$$
+      设最佳拟合的函数为
+      $$ f(x) = c_1 f_1(x) + c_2f_2(x) + \ldots + c_n f_n(x).$$
+      用前面学习的套路可以找到$\mathbf{c} = (c_1, c_2,\ldots, c_n)^T$ 令 $\sum_i [y_i - f(x_i)]^2$，也就是$\lVert A\mathbf{c} - \vecy\rVert$最小化。这里$m\times n$的$A$定义为：
+      $$A_{i,j} = f_j(x_i)$$
+      
+    \end{frame}
+
+
+    \begin{frame}
+      \frametitle{作业}
+      在$[-\frac{\pi}{2},\frac{\pi}{2}]$上取均匀地取$m=101$个点：
+      $$x_0=-\frac{\pi}{2},\ x_1 = -\frac{\pi}{2}+\frac{\pi}{100},\ x_2 = -\frac{\pi}{2}+\frac{2\pi}{100}, \ldots, x_{100} = \frac{\pi}{2}.$$
+
+      制造模拟数据点：
+      $$ y_i= \sin(x_i), \ (i=0,1,2,\ldots, 100).$$
+
+      用四次多项式
+      $$ y = c_0 + c_1x+c_2x^2+c_3x^3+c_4x^4 $$
+      来对这些数据点做最佳线性拟合。把求出的$c_0,c_1,c_2,c_3,c_4$和$\sin x$的泰勒展开系数做比较。
+      
+    \end{frame}
+  \ech
+\end{document}
